@@ -3,144 +3,77 @@ import 'package:flutter_application_1/screens/product.dart';
 import 'package:flutter_application_1/usuario.dart';
 import 'package:go_router/go_router.dart';
 
-class AppScreen extends StatefulWidget {
+class AppScreen extends StatelessWidget {
   final Usuario usuario;
 
-  const AppScreen({
-    super.key,
-    required this.usuario,
-  });
+  const AppScreen({super.key, required this.usuario});
 
-  @override
-  State<AppScreen> createState() => _AppScreenState();
-}
-
-class _AppScreenState extends State<AppScreen> {
-  final TextEditingController nombreController = TextEditingController();
-  final TextEditingController descripcionController = TextEditingController();
-  final TextEditingController precioController = TextEditingController();
-  final TextEditingController cantidadController = TextEditingController();
-
-  Product? primerProducto;
-  int productosCargados = 0;
-
-  void cargarProducto() {
-    if (nombreController.text.isEmpty ||
-        descripcionController.text.isEmpty ||
-        precioController.text.isEmpty ||
-        cantidadController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Completá todos los campos')),
-      );
-      return;
-    }
-
-    final double? precio = double.tryParse(precioController.text);
-    final int? cantidad = int.tryParse(cantidadController.text);
-
-    if (precio == null || cantidad == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Precio o cantidad inválidos')),
-      );
-      return;
-    }
-
-    final nuevoProducto = Product(
-      nombre: nombreController.text,
-      descripcion: descripcionController.text,
-      precio: precio,
-      cantidad: cantidad,
-      siguiente: primerProducto,
-    );
-
-    primerProducto = nuevoProducto;
-    productosCargados++;
-
-    nombreController.clear();
-    descripcionController.clear();
-    precioController.clear();
-    cantidadController.clear();
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Producto cargado correctamente')),
-    );
-  }
-
-  void calcularResultados() {
-    if (primerProducto == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Debe haber al menos un producto cargado')),
-      );
-      return;
-    }
-
-    context.go('/results', extra: primerProducto);
-  }
-
-  @override
-  void dispose() {
-    nombreController.dispose();
-    descripcionController.dispose();
-    precioController.dispose();
-    cantidadController.dispose();
-    super.dispose();
-  }
+  // Lista de elementos hardcodeados
+  static final List<Product> productos = [
+    Product(
+      nombre: "Notebook",
+      descripcion: "Notebook 16 GB de RAM.",
+      imagen: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSU3ey-sbJf8P-osxXAwZncmfbHXTXwoxEQvB_o6kstcQ&s=10",
+    ),
+    Product(
+      nombre: "Celular",
+      descripcion: "Celular Samsung",
+      imagen: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCPlrnrONonwhuFiNOc2ZzuKwaoViP03d_gC8mvwBbF8ukflmP7ZZcT_KO&s=10",
+    ),
+    Product(
+      nombre: "Auriculares",
+      descripcion: "Auriculares con cancelación de ruido.",
+      imagen: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTF0RfNUQhhexFp5N3nTTguT8ycyujLwdwSmEMpoi_N0g&s=10",
+    ),
+    Product(
+      nombre: "Computadora Gamer",
+      descripcion: "PC Gamer",
+      imagen: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRncLYnIkNbLIqeI2oyFHibcpnPvQ4s53yLpQ64KoMHzg&s=10",
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bienvenido ${widget.usuario.nombre}'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-            TextField(
-              controller: nombreController,
-              decoration: const InputDecoration(
-                labelText: 'Nombre',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: descripcionController,
-              decoration: const InputDecoration(
-                labelText: 'Descripción',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: precioController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Precio',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: cantidadController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Cantidad',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: cargarProducto,
-              child: const Text('Ingresar producto'),
-            ),
-            const SizedBox(height: 12),
-            ElevatedButton(
-              onPressed: calcularResultados,
-              child: const Text('Calcular'),
-            ),
-          ],
+        title: Text(
+          "Bienvenido ${usuario.nombre} ${usuario.apellido}",
         ),
+      ),
+      body: ListView.builder(
+        itemCount: productos.length,
+        itemBuilder: (context, index) {
+          final producto = productos[index];
+
+          return Card(
+            margin: const EdgeInsets.all(10),
+            child: ListTile(
+              leading: Image.network(
+                producto.imagen,
+                width: 70,
+                height: 70,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(Icons.image_not_supported, size: 50);
+                },
+              ),
+              title: Text(
+                producto.nombre,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              subtitle: Text(producto.descripcion),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                context.push(
+                  "/detalle",
+                  extra: producto,
+                );
+              },
+            ),
+          );
+        },
       ),
     );
   }
