@@ -11,18 +11,26 @@ final GoRouter appRouter = GoRouter(
       path: '/',
       builder: (context, state) => const LoginPage(),
     ),
+
     GoRoute(
       path: '/app',
       builder: (context, state) {
         final usuario = state.extra as Usuario;
-        return AppScreen(usuario: usuario);
+
+        return AppScreen(
+          usuario: usuario,
+        );
       },
     ),
+
     GoRoute(
-      path: '/results',
+      path: '/detalle',
       builder: (context, state) {
-        final primerProducto = state.extra as Product;
-        return ResultsScreen(primerProducto: primerProducto);
+        final producto = state.extra as Product;
+
+        return ResultsScreen(
+          producto: producto,
+        );
       },
     ),
   ],
