@@ -12,7 +12,9 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(routerConfig: appRouter);
+    return MaterialApp.router(
+      routerConfig: appRouter,
+    );
   }
 }
 
@@ -26,21 +28,57 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController usernameController =
+      TextEditingController();
 
-  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController passwordController =
+      TextEditingController();
 
-  final Usuario usuario1 = Usuario(
+  final List<Usuario> usuarios = [
+    Usuario(
     username: 'bob',
     password: '1234',
     nombre: 'Bob',
-    apellido: 'Esponja',
-  );
+    apellido: ' Esponja',
+  ),
+
+    Usuario(
+    username: 'alan',
+    password: '0942',
+    nombre: 'Alan',
+    apellido: ' Barrutia',
+  ),
+
+    Usuario(
+    username: 'maximo',
+    password: 'HOLA123',
+    nombre: 'Maximo',
+    apellido: ' Perez',
+  ),
+
+    Usuario(
+    username: 'juan',
+    password: '8877',
+    nombre: 'Juan',
+    apellido: ' Piccicaco',
+  ),
+
+    Usuario(
+    username: 'alejandro',
+    password: 'FAU234',
+    nombre: 'Alejandro',
+    apellido: ' Perman',
+  ),
+];
+
 
   void login() {
-    if (usernameController.text.isEmpty || passwordController.text.isEmpty) {
+    if (usernameController.text.isEmpty ||
+        passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("llena usuario y contraseña")),
+        const SnackBar(
+          content: Text("llena usuario y contraseña"),
+        ),
       );
 
       return;
@@ -48,21 +86,29 @@ class _LoginPageState extends State<LoginPage> {
 
     Usuario? usuarioEncontrado;
 
-    if (usernameController.text == usuario1.username &&
-        passwordController.text == usuario1.password) {
-      usuarioEncontrado = usuario1;
+    for (var usuario in usuarios) {
+      if (usuario.username == usernameController.text &&
+          usuario.password == passwordController.text) {
+        usuarioEncontrado = usuario;
+        break;
+      }
     }
+
     if (usuarioEncontrado != null) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("login correcto")))
+          .showSnackBar(
+            const SnackBar(content: Text("login correcto")),
+          )
           .closed
           .then((_) {
             context.go('/app', extra: usuarioEncontrado);
           });
     } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("login incorrecto")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("login incorrecto"),
+        ),
+      );
     }
   }
 
@@ -76,15 +122,23 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  TextField(controller: usernameController),
+                  TextField(
+                    controller: usernameController,
+                  ),
 
-                  TextField(controller: passwordController, obscureText: true),
+                  TextField(
+                    controller: passwordController,
+                    obscureText: true,
+                  ),
                 ],
               ),
             ),
           ),
 
-          ElevatedButton(onPressed: login, child: const Text("inicia sesion")),
+          ElevatedButton(
+            onPressed: login,
+            child: const Text("inicia sesion"),
+          ),
         ],
       ),
     );
